@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, Flame } from "lucide-react";
 import BookingCalendar from "@/components/BookingCalendar";
+import { SLOTS_ENDPOINTS } from "@/lib/slots";
 
 export const Route = createFileRoute("/treinar/muaythai/agendar")({
   component: MuayThaiAgendarPage,
@@ -27,7 +28,7 @@ function MuayThaiAgendarPage() {
       <div className="mx-auto max-w-lg px-6 pb-16 pt-8">
         <BookingCalendar
           modalidade="muaythai"
-          slotsEndpoint="https://n8n.marcaki.com/webhook/slots/muaythai"
+          slotsEndpoint={SLOTS_ENDPOINTS.muaythai}
           agendarEndpoint="https://n8n.marcaki.com/webhook/agendar/muaythai"
           titulo="Muay Thai Particular"
           icone={<Flame className="h-8 w-8 text-primary" strokeWidth={1.5} />}

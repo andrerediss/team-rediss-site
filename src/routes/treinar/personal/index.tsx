@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Dumbbell, MapPin, ChevronLeft, ArrowRight, CalendarDays } from "lucide-react";
+import { useEffect } from "react";
 import { useReveal } from "@/hooks/use-reveal";
+import { prefetchSlots, SLOTS_ENDPOINTS } from "@/lib/slots";
 
 export const Route = createFileRoute("/treinar/personal/")({
   component: PersonalPage,
@@ -20,6 +22,10 @@ const planos = [
 ];
 
 function PersonalPage() {
+  useEffect(() => {
+    prefetchSlots(SLOTS_ENDPOINTS.personal);
+  }, []);
+
   const heroRef = useReveal<HTMLDivElement>();
   const planosRef = useReveal<HTMLDivElement>();
   const localRef = useReveal<HTMLDivElement>();

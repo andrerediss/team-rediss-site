@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Flame, MapPin, ChevronLeft, ArrowRight, CalendarDays } from "lucide-react";
+import { useEffect } from "react";
 import { useReveal } from "@/hooks/use-reveal";
+import { prefetchSlots, SLOTS_ENDPOINTS } from "@/lib/slots";
 
 export const Route = createFileRoute("/treinar/muaythai/")({
   component: MuayThaiPage,
@@ -20,6 +22,10 @@ const planos = [
 ];
 
 function MuayThaiPage() {
+  useEffect(() => {
+    prefetchSlots(SLOTS_ENDPOINTS.muaythai);
+  }, []);
+
   const heroRef = useReveal<HTMLDivElement>();
   const planosRef = useReveal<HTMLDivElement>();
   const localRef = useReveal<HTMLDivElement>();

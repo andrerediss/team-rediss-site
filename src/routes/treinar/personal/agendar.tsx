@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, Dumbbell } from "lucide-react";
 import BookingCalendar from "@/components/BookingCalendar";
+import { SLOTS_ENDPOINTS } from "@/lib/slots";
 
 export const Route = createFileRoute("/treinar/personal/agendar")({
   component: PersonalAgendarPage,
@@ -27,7 +28,7 @@ function PersonalAgendarPage() {
       <div className="mx-auto max-w-lg px-6 pb-16 pt-8">
         <BookingCalendar
           modalidade="personal"
-          slotsEndpoint="https://n8n.marcaki.com/webhook/slots/personal"
+          slotsEndpoint={SLOTS_ENDPOINTS.personal}
           agendarEndpoint="https://n8n.marcaki.com/webhook/agendar/personal"
           titulo="Personal Trainer"
           icone={<Dumbbell className="h-8 w-8 text-primary" strokeWidth={1.5} />}

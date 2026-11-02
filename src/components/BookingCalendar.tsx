@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { fetchSlots, invalidateSlots, type Slot } from "@/lib/slots";
 
 interface BookingCalendarProps {
   modalidade: "personal" | "muaythai";
@@ -13,14 +14,6 @@ interface BookingCalendarProps {
 }
 
 type Step = "loading" | "calendar" | "success";
-
-interface Slot {
-  isoStart: string;
-  isoEnd: string;
-  date?: string;
-  time?: string;
-  label?: string;
-}
 
 interface AgendamentoConfirmado {
   nome: string;
@@ -92,10 +85,19 @@ function formatTimeLabel(slot: Slot) {
 
 function CalendarSkeleton() {
   return (
-    <div className="grid grid-cols-7 gap-2">
-      {Array.from({ length: 35 }).map((_, index) => (
-        <div key={index} className="aspect-square animate-pulse bg-card/70" />
-      ))}
+    <div>
+      <div className="grid grid-cols-7 gap-2">
+        {Array.from({ length: 35 }).map((_, index) => (
+          <div key={index} className="aspect-square animate-pulse bg-card/70" />
+        ))}
+      </div>
+      <p
+        role="status"
+        className="mt-4 flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-muted-foreground"
+      >
+        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+        Carregando horários disponíveis…
+      </p>
     </div>
   );
 }
@@ -129,14 +131,7 @@ export default function BookingCalendar({
     setLoadError("");
 
     try {
-      const response = await fetch(slotsEndpoint);
-
-      if (!response.ok) {
-        throw new Error("Falha ao carregar slots");
-      }
-
-      const data = (await response.json()) as { slots?: Slot[] };
-      setSlots(Array.isArray(data.slots) ? data.slots : []);
+      setSlots(await fetchSlots(slotsEndpoint));
       setStep("calendar");
     } catch {
       setLoadError("Não foi possível carregar os horários disponíveis.");
@@ -199,6 +194,7 @@ export default function BookingCalendar({
         throw new Error("Falha ao agendar");
       }
 
+      invalidateSlots(slotsEndpoint);
       setConfirmado({
         nome: nome.trim(),
         whatsapp: whatsapp.trim(),
