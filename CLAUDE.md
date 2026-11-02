@@ -17,7 +17,7 @@ npm run format       # Prettier (write)
 
 There are no tests in this project.
 
-Use Node 22, as defined in `.nvmrc`. For a new checkout, install dependencies with `npm ci --ignore-scripts` before reviewing package scripts.
+Use Node 22 locally to match production. The repository has no `.nvmrc`; the Node version is set in EasyPanel (see Deployment). For a new checkout, install dependencies with `npm ci --ignore-scripts` before reviewing package scripts.
 
 ## Architecture
 
@@ -55,6 +55,8 @@ When a turma opens, update the unit page, the card in `/treinar/turma`, the card
 
 ## Deployment
 
-Deploys through EasyPanel with Nixpacks. `nixpacks.toml` installs dependencies with npm, builds the application, and starts the SSR server with `npm run start`. The production runtime is Node 22 from `.nvmrc`.
+Deploys through EasyPanel (service `team-rediss-site`) with Nixpacks 1.41.0, from the `main` branch with build path `/`. The install, build, and start commands (`npm install`, `npm run build`, `npm run start`) are set both in `nixpacks.toml` and in the EasyPanel build settings — keep them in sync.
 
-Do not add Node 20 to EasyPanel Nixpacks packages or environment variables. Including Node 20 and 22 in the same Nix environment causes a dependency-file conflict during image creation. The canonical production domain is `https://andrerediss.com`.
+The production runtime is Node 22, set **only** in EasyPanel's "Pacotes Nix" field as `nodejs_22`. The repository does not pin Node (no `.nvmrc`, no `engines`, no `nixPkgs` in `nixpacks.toml`). To change the Node version, change it in EasyPanel, not in the repository.
+
+Do not add a second Node package (for example `nodejs_20`) or `NIXPACKS_NODE_VERSION` in EasyPanel, and do not re-add `nixPkgs` to `nixpacks.toml`. Two Node versions in the same Nix environment cause a dependency-file conflict during image creation. The canonical production domain is `https://andrerediss.com`.

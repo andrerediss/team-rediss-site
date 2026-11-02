@@ -12,7 +12,7 @@ Site institucional de André Rediss, personal trainer e professor de Muay Thai. 
 
 ## Requisitos
 
-- Node.js 22, definido em `.nvmrc`
+- Node.js 22, a mesma versão de produção (o repositório não tem `.nvmrc`; a versão é definida no EasyPanel)
 - npm
 
 ## Desenvolvimento
@@ -64,9 +64,11 @@ As rotas `/treinar/personal/agendar` e `/treinar/muaythai/agendar` usam o `Booki
 
 ## Deploy
 
-O deploy de produção é feito no EasyPanel com Nixpacks. O runtime deve usar apenas Node 22, que é detectado a partir de `.nvmrc`.
+O deploy de produção é feito no EasyPanel (serviço `team-rediss-site`) com Nixpacks 1.41.0, a partir do branch `main` e com caminho de build `/`. Os comandos de instalação, build e início (`npm install`, `npm run build` e `npm run start`) estão definidos no `nixpacks.toml` e também nas configurações de construção do EasyPanel — mantenha os dois iguais.
 
-Não configure `nodejs_20` ou `NIXPACKS_NODE_VERSION=20` no EasyPanel: misturar Node 20 e 22 na imagem causa conflito no Nix. O build executa `npm install`, `npm run build` e inicia com `npm run start`, conforme `nixpacks.toml`.
+O runtime de produção é o Node 22, definido **apenas** no campo "Pacotes Nix" do EasyPanel como `nodejs_22`. O repositório não fixa a versão do Node (não há `.nvmrc`, `engines` nem `nixPkgs` no `nixpacks.toml`). Para mudar a versão, altere no EasyPanel, não no repositório.
+
+Não adicione um segundo pacote de Node (como `nodejs_20`) nem `NIXPACKS_NODE_VERSION` no EasyPanel, e não volte a colocar `nixPkgs` no `nixpacks.toml`: duas versões do Node na mesma imagem causam conflito no Nix.
 
 O domínio canônico é `https://andrerediss.com`; o `server.mjs` redireciona `www` para o domínio sem prefixo.
 
