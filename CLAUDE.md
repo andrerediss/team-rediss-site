@@ -51,6 +51,13 @@ When a turma opens, update the unit page, the card in `/treinar/turma`, the card
 
 **Booking flow:** `/treinar/personal/agendar` and `/treinar/muaythai/agendar` render `BookingCalendar`, which reads free slots from `/webhook/slots/...` and posts the booking to `/webhook/agendar/...`. All n8n webhooks live on `https://n8n.marcaki.com` and are unauthenticated — never put anything but public form input through them.
 
+Slot fetching lives in `src/lib/slots.ts` (`SLOTS_ENDPOINTS`, `fetchSlots`, `prefetchSlots`, `invalidateSlots`). The plan pages (`/treinar/personal`, `/treinar/muaythai`) prefetch slots on mount so the calendar opens with data ready; the response is reused for 60 s and invalidated after a confirmed booking. While slots load, `BookingCalendar` shows "Carregando horários disponíveis…". The n8n slots endpoints only allow the `andrerediss.com` origin (CORS), so slots fail to load from `localhost`.
+
+Working hours are configured in n8n, not in this repo. Only free slots are offered: anything already on the "Trabalho" Google Calendar is blocked.
+- **Personal** (`[Personal] Slots Disponíveis`): `START_HOUR` / `END_HOUR` / `WORKING_DAYS` constants in the "Calcula Slots Livres" Code node. Currently 14:00 to 22:00 (last class at 21:00), Monday to Friday.
+- **Muay Thai** (`[Muay Thai] Slots Disponíveis`): the `Disponibilidade` tab of the `Muay_Thai_Particular_Disponibilidade` Google Sheet, with one row per weekday and hour (`dia_semana` without accents, `horario`, `disponivel` TRUE/FALSE). Currently 14:00 to 21:00, Monday to Friday. Keep rows ordered by day and hour, above the legend.
+- The `[Personal]` / `[Muay Thai] Confirmar Agendamento` workflows do not validate the hour; they only create the Calendar event and send the WhatsApp messages.
+
 **`calcYears` utility (index.tsx):** Computes years of martial arts practice from birth year + starting age, accounting for the April 6 birthday.
 
 ## Deployment

@@ -62,6 +62,17 @@ Ao abrir uma turma, atualize a página da unidade, o card em `/treinar/turma`, o
 
 As rotas `/treinar/personal/agendar` e `/treinar/muaythai/agendar` usam o `BookingCalendar`, que busca os horários livres em `/webhook/slots/...` e envia o agendamento para `/webhook/agendar/...` no n8n.
 
+A busca de horários fica em `src/lib/slots.ts`. As páginas de planos (`/treinar/personal` e `/treinar/muaythai`) já buscam os horários ao abrir, então o calendário aparece praticamente na hora ao clicar em "Quero agendar". A resposta é reaproveitada por até 60 segundos e descartada depois de um agendamento confirmado. Enquanto os horários não chegam, o calendário mostra "Carregando horários disponíveis…". Os endpoints de horários só aceitam a origem `andrerediss.com` (CORS); a partir do `localhost` a busca falha.
+
+Os horários de atendimento são configurados no n8n, não neste repositório. O site só oferece horários livres: o que já está na agenda "Trabalho" do Google fica bloqueado.
+
+| Modalidade | Onde configurar | Atual |
+| --- | --- | --- |
+| Personal | Workflow `[Personal] Slots Disponíveis`, nó "Calcula Slots Livres" (`START_HOUR`, `END_HOUR`, `WORKING_DAYS`) | 14:00 às 22:00 (última aula às 21:00), segunda a sexta |
+| Muay Thai | Planilha `Muay_Thai_Particular_Disponibilidade`, aba `Disponibilidade`: uma linha por dia e horário (`dia_semana` sem acento, `horario`, `disponivel` TRUE/FALSE) | 14:00 às 21:00, segunda a sexta |
+
+Na planilha do Muay Thai, mantenha as linhas ordenadas por dia e horário, acima da legenda. Os workflows `Confirmar Agendamento` não validam o horário: só criam o evento no Google Calendar e enviam as mensagens de WhatsApp.
+
 ## Deploy
 
 O deploy de produção é feito no EasyPanel (serviço `team-rediss-site`) com Nixpacks 1.41.0, a partir do branch `main` e com caminho de build `/`. Os comandos de instalação, build e início (`npm install`, `npm run build` e `npm run start`) estão definidos no `nixpacks.toml` e também nas configurações de construção do EasyPanel — mantenha os dois iguais.
